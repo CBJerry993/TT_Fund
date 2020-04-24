@@ -22,9 +22,9 @@
 - [原网址](http://data.eastmoney.com/hsgt/index.html)
 - 文件名：beixiang.py （上海MarketType=1, 深圳MarketType=3）
 
-## 二、北向资金每日前10大流入股
+## 二、北向资金每日前20大交易股
 
-- [原网址](http://data.eastmoney.com/hsgt/top10/2020-01-02.html)
+- [原网址](http://data.eastmoney.com/hsgt/top10/2020-01-02.html)，分沪股通10大交易股和深股通10大交易股。
 
 - 文件名：beixiang_10stock.py
 
