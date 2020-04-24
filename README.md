@@ -14,7 +14,7 @@
 ---
 
 ## 一、北向资金每日流向
-原网址：http://data.eastmoney.com/hsgt/index.html 
+[原网址](http://data.eastmoney.com/hsgt/index.html)
 - 文件名：beixiang.py
 - 本程序获取北向资金每日流向 http://data.eastmoney.com/hsgt/index.html  
 - 上海 MarketType=1, 深圳MarketType=3（对应深圳成指）
