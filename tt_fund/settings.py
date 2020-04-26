@@ -74,9 +74,10 @@ ROBOTSTXT_OBEY = False
 
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
-# ITEM_PIPELINES = {
-#    'tt_fund.pipelines.TtFundPipeline': 300,
-# }
+ITEM_PIPELINES = {
+    'tt_fund.pipelines.TtFundPipeline': 300,
+    'tt_fund.pipelines.CloseSQLPipeline': 200,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/autothrottle.html

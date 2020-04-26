@@ -7,20 +7,7 @@ from tt_fund.settings import str_now_day
 from tt_fund.settings import save_item_in_csv
 
 """
-版本号：v1.0.20200101
-文件名fund_earning.py
-
-笔者有代码洁癖，有更清晰简单的coding方法可以联系我
-微信cbj1946599315，特此说明！
------------------------------------
-启动方式：scrapy crawl spider.name
-文件名：fund_earning.py
-本程序启动后依次获取以下3个部分内容：
-1.基金每日收益情况
-2.1基金成立以来每日净值（pageSize写2万一次加载完。一个月就写20）
-2.2基金基本信息
-2.3基金10大持仓股（可以指定年和指定前10大还是20大） http://fundf10.eastmoney.com/FundArchivesDatas.aspx?type=jjcc&code=320007&topline=10&year=&month=
------------------------------------
+各爬虫说明详见github项目 https://github.com/CBJerry993/tt_fund
 """
 
 
@@ -28,17 +15,14 @@ class FundEarningSpider(scrapy.Spider):
     name = 'fund_earning'
     allowed_domains = ['eastmoney.com']
     # 股票型ft=gp，混合型ft=hh
-    start_urls = [
-        'http://fund.eastmoney.com/data/rankhandler.aspx?op=ph&dt=kf&ft=gp&rs=&gs=0&sc=zzf&st=desc'
-        '&qdii=&tabSubtype=,,,,,&pi=1&pn=10000&dx=1&v=0.42187391938911856',
-        'http://fund.eastmoney.com/data/rankhandler.aspx?op=ph&dt=kf&ft=hh&rs=&gs=0&sc=zzf&st=desc'
-        '&qdii=&tabSubtype=,,,,,&pi=1&pn=10000&dx=1&v=0.42187391938911856']
+    start_urls = ["http://fund.eastmoney.com/data/rankhandler.aspx?op=ph&dt=kf&ft={}&rs=&gs=0&sc=zzf&st=desc&qdii=&" \
+                  "tabSubtype=,,,,,&pi=1&pn=10000&dx=1&v=0.42187391938911856".format(i) for i in ["gp", "hh"]]
     # 表头仅写入一次
-    title_num_1, title_num_2_1, title_num_2_2, title_num_2_3 = 0, 0, 0, 0
+    title_num_1, title_num_2_1, title_num_2_2, title_num_2_3 = [0] * 4
     # 是否需要爬取以下内容
-    need_fund_earning_perday, need_fund_basic_info, need_fund_position = True, True, True
+    need_fund_earning_perday, need_fund_basic_info, need_fund_position = [1] * 3
 
-    # 1.基金每日收益情况
+    # 1.基金当日收益排名情况（基金排名页）
     def parse(self, response):
         fund_type = re.findall(r'kf&ft=(.*?)&rs=&gs=0&sc=zzf&st=desc', response.url)[0]
         response = response.text
@@ -78,12 +62,13 @@ class FundEarningSpider(scrapy.Spider):
                 )
             # 2.3基金10大持仓股(指定按年)
             if self.need_fund_position:
-                yield scrapy.Request(
-                    "http://fundf10.eastmoney.com/FundArchivesDatas.aspx?type=jjcc&code={}&topline=10&year=2019"
-                    "&month=".format(item["code"].strip()),
-                    callback=self.parse_fund_position,
-                    meta={"item": item},
-                )
+                for year in ["2019", "2020"]:
+                    yield scrapy.Request(
+                        "http://fundf10.eastmoney.com/FundArchivesDatas.aspx?type=jjcc&code={}&topline=10&year={}"
+                        "&month=".format(item["code"].strip(), year),
+                        callback=self.parse_fund_position,
+                        meta={"item": item},
+                    )
 
     # 2.1基金成立以来每日净值
     def parse_fund_earning_perday(self, response):
@@ -129,6 +114,8 @@ class FundEarningSpider(scrapy.Spider):
                        "company", "company_url", "bank", "bank_url", "manager", "manager_url", "profit_situation",
                        "management_feerate", "trustee_feerate", "standard_compared", "followed_target"]:
             item[i_name] = item[i_name][0] if len(item[i_name]) > 0 else None
+        for i in ["company_url", "bank_url", "manager_url"]:
+            item[i] = "http:" + item[i]
         print(item), save_item_in_csv(item, "fund_basic_info_{}.csv".format(str_now_day), self.title_num_2_2)
         self.title_num_2_2 = 1
 

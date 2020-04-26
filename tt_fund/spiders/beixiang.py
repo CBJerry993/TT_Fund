@@ -7,14 +7,7 @@ from tt_fund.settings import str_now_day
 from tt_fund.settings import save_item_in_csv
 
 """
-笔者有代码洁癖，有更清晰简单的coding方法可以联系我
-微信cbj1946599315，特此说明！
------------------------------------
-启动方式：scrapy crawl spider.name
-文件名：beixiang.py
-本程序获取北向资金每日流向 http://data.eastmoney.com/hsgt/index.html  
-上海 MarketType=1, 深圳MarketType=3（对应深圳成指）
------------------------------------
+各爬虫说明详见github项目 https://github.com/CBJerry993/tt_fund
 """
 
 
@@ -64,7 +57,7 @@ class BeixiangSpider(scrapy.Spider):
             item["today_in"] = round(i.get("DRZJLR") / 100, 2)  # 当日资金流入 同花顺是这个！包含了当日成交净买额 + 申报未成交的部分
             item["grand_total_in"] = round(i.get("LSZJLR") / 100, 2)  # 历史资金累计流入 当日资金流入的合计
             item["today_balance"] = round(i.get("DRYE") / 100, 2)  # 当日余额
-            item["stock_code"] = i.get("LCGCode")
+            item["stock_code"] = "\t" + i.get("LCGCode")
             item["stock"] = i.get("LCG")
             item["stock_up"] = round(i.get("LCGZDF"), 2)
             item["sz_index"] = i.get("SSEChange")

@@ -6,19 +6,7 @@ from tt_fund.settings import str_now_day
 from tt_fund.settings import save_item_in_csv
 
 """
-笔者有代码洁癖，有更清晰简单的coding方法可以联系我
-微信cbj1946599315，特此说明！
------------------------------------
-启动方式：scrapy crawl spider.name
-文件名：fund_company.py
-本程序获取基金公司信息  
-1.主页基金列表  http://fund.eastmoney.com/Company/default.html
-2.1基金公司基本信息  http://fund.eastmoney.com/Company/80560392.html
-2.2基金公司股票型和混合型规模、数量、经理数量排名  http://fund.eastmoney.com/Company/home/Gmtable?gsId=80560392&fundType=25
-2.3基金公司下的基金清单  http://fund.eastmoney.com/Company/home/KFSFundNet?gsid=80560392&fundType=25
-2.4公司的10大持仓股票  http://fund.eastmoney.com/Company/f10/gscc_80560392.html
-2.5公司下的行业配置  http://fund.eastmoney.com/Company/f10/hypz_80560392.html
------------------------------------
+各爬虫说明详见github项目 https://github.com/CBJerry993/tt_fund
 """
 
 
@@ -27,10 +15,10 @@ class FundCompanySpider(scrapy.Spider):
     allowed_domains = ['eastmoney.com']
     start_urls = ['http://fund.eastmoney.com/Company/default.html']
     # 表头仅存一次
-    title_num_1, title_num_2_1, title_num_2_2, title_num_2_3, title_num_2_4, title_num_2_5 = 0, 0, 0, 0, 0, 0
+    title_num_1, title_num_2_1, title_num_2_2, title_num_2_3, title_num_2_4, title_num_2_5 = [0] * 6
     # 是否需要爬取以下内容
-    need_company_info, need_company_fundinfo, need_company_fundList, need_company_10stock, need_industry_category = \
-        0, 0, 0, 0, 0
+    need_company_info, need_company_fundscale, need_company_fundlist, need_company_10stock, need_industry_category = \
+        [1] * 5
 
     # 1.主页基金列表
     def parse(self, response):
@@ -45,41 +33,46 @@ class FundCompanySpider(scrapy.Spider):
             item["company_shortName"] = item["company_shortName"][0]
             item["company_url"] = "http://fund.eastmoney.com" + a.xpath("./@href")[0]
             item["company_code"] = re.findall(r'Company/(.*?)\.html', item["company_url"])[0]
-            print(item)
+            # print(item)
             # 2.1基金公司基本信息
-            yield scrapy.Request(
-                "http://fund.eastmoney.com/Company/{}.html".format(item["company_code"]),
-                callback=self.parse_company_info,
-                meta={"item": item},
-            )
+            if self.need_company_info:
+                yield scrapy.Request(
+                    "http://fund.eastmoney.com/Company/{}.html".format(item["company_code"]),
+                    callback=self.parse_company_info,
+                    meta={"item": item},
+                )
             # 2.2基金公司股票型和混合型规模、数量、经理数量排名
-            for fundType in ["25", "27"]:  # funyType=25:股票型 27:混合型
-                yield scrapy.Request(
-                    "http://fund.eastmoney.com/Company/home/Gmtable?gsId={}&fundType={}".format(item["company_code"],
-                                                                                                fundType),
-                    callback=self.parse_company_fundinfo,
-                    meta={"item": item},
-                )
+            if self.need_company_fundscale:
+                for fundType in ["25", "27"]:  # funyType=25:股票型 27:混合型
+                    yield scrapy.Request(
+                        "http://fund.eastmoney.com/Company/home/Gmtable?gsId={}&fundType={}".format(
+                            item["company_code"], fundType),
+                        callback=self.parse_company_fundscale,
+                        meta={"item": item},
+                    )
             # 2.3基金公司下的基金清单
-            for funyType in ["001", "002"]:  # funyType=001是股票型 002是混合型
+            if self.need_company_fundlist:
+                for funyType in ["001", "002"]:  # funyType=001是股票型 002是混合型
+                    yield scrapy.Request(
+                        "http://fund.eastmoney.com/Company/home/KFSFundNet?gsid={}&fundType={}".format(
+                            item["company_code"], funyType),
+                        callback=self.parse_company_fundList,
+                        meta={"item": item},
+                    )
+            # 2.4公司的10大持仓股票
+            if self.need_company_10stock:
                 yield scrapy.Request(
-                    "http://fund.eastmoney.com/Company/home/KFSFundNet?gsid={}&fundType={}".format(item["company_code"],
-                                                                                                   funyType),
-                    callback=self.parse_company_fundList,
+                    "http://fund.eastmoney.com/Company/f10/gscc_{}.html".format(item["company_code"]),
+                    callback=self.parse_company_10stock,
                     meta={"item": item},
                 )
-            # 2.4公司的10大持仓股票
-            yield scrapy.Request(
-                "http://fund.eastmoney.com/Company/f10/gscc_{}.html".format(item["company_code"]),
-                callback=self.parse_company_10stock,
-                meta={"item": item},
-            )
             # 2.5公司下的行业配置
-            yield scrapy.Request(
-                "http://fund.eastmoney.com/Company/f10/hypz_{}.html".format(item["company_code"]),
-                callback=self.parse_company_industry_category,
-                meta={"item": item},
-            )
+            if self.need_industry_category:
+                yield scrapy.Request(
+                    "http://fund.eastmoney.com/Company/f10/hypz_{}.html".format(item["company_code"]),
+                    callback=self.parse_company_industry_category,
+                    meta={"item": item},
+                )
 
     # 2.1基金公司基本信息
     def parse_company_info(self, response):
@@ -106,7 +99,7 @@ class FundCompanySpider(scrapy.Spider):
         self.title_num_2_1 = 1
 
     # 2.2基金公司股票型和混合型规模、数量、经理数量排名
-    def parse_company_fundinfo(self, response):
+    def parse_company_fundscale(self, response):
         item = response.meta.get("item")
         company_code = item.get("company_code")
         company_shortName = item.get("company_shortName")
@@ -127,7 +120,7 @@ class FundCompanySpider(scrapy.Spider):
                        'fund_amount_mean', 'fund_amount_rank', 'fund_manager_amount', 'fund_manager_amount_mean',
                        'fund_manager_amount_rank']:
             item[i_name] = item[i_name][0] if len(item[i_name]) > 0 else None
-        print(item), save_item_in_csv(item, "company_fundinfo_{}.csv".format(str_now_day), self.title_num_2_2)
+        print(item), save_item_in_csv(item, "company_fundscale_{}.csv".format(str_now_day), self.title_num_2_2)
         self.title_num_2_2 = 1
 
     # 2.3基金公司下的基金清单
@@ -153,7 +146,7 @@ class FundCompanySpider(scrapy.Spider):
         company_code = item.get("company_code")
         company_shortName = item.get("company_shortName")
         response = etree.HTML(response.body.decode())
-        tr_list = response.xpath("//div[@id='contentWrap']/div[2]//tbody[1]/tr")
+        tr_list = response.xpath("//table[@class='ttjj-table ttjj-table-hover']/tbody[1]/tr")
         for tr in tr_list:
             item = dict()
             item["company_code"] = company_code
@@ -162,7 +155,7 @@ class FundCompanySpider(scrapy.Spider):
             item["stock_code"] = "\t" + item["stock_code"]
             item["stock_name"] = tr.xpath("./td[3]/a/text()")[0]
             item["havein_mycomanpy_fund"] = tr.xpath("./td[5]/a/text()")[0]  # 本公司持有基金数
-            item["hold_in_value"] = tr.xpath("./td[6]/text()")[0]  # 占总净值比例
+            item["hold_in_value_percent"] = tr.xpath("./td[6]/text()")[0]  # 占总净值比例
             item["stock_amount"] = tr.xpath("./td[7]/text()")[0]  # 持股数(万股)
             item["stock_value"] = tr.xpath("./td[8]/text()")[0]  # 持仓市值(万元)
             print(item), save_item_in_csv(item, "company_10stock_{}.csv".format(str_now_day), self.title_num_2_4)
@@ -174,13 +167,14 @@ class FundCompanySpider(scrapy.Spider):
         company_code = item.get("company_code")
         company_shortName = item.get("company_shortName")
         response = etree.HTML(response.body.decode())
-        tr_list = response.xpath("//div[@id='contentWrap']/div[2]//tbody[1]/tr")[1:]  # 第一个是标题，不要
+        tr_list = response.xpath("//table[@class='ttjj-table ttjj-table-hover']//tr")[1:]  # [1:]去标题
         for tr in tr_list:
             item = {"company_code": company_code,
                     "company_shortName": company_shortName,
                     "industry_category": tr.xpath("./td[2]/text()")[0],
                     "havein_mycomanpy_fund": tr.xpath("./td[4]/a/text()")[0],
-                    "hold_in_value": tr.xpath("./td[5]/text()")[0], "stock_value": tr.xpath("./td[6]/text()")[0]}
+                    "hold_in_value_percent": tr.xpath("./td[5]/text()")[0],
+                    "stock_value": tr.xpath("./td[6]/text()")[0]}
             print(item), save_item_in_csv(item, "company_industry_category_{}.csv".format(str_now_day),
                                           self.title_num_2_5)
             self.title_num_2_5 = 1
