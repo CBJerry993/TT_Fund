@@ -51,10 +51,10 @@ class Beixiang10Spider(scrapy.Spider):
             item["close"] = i.get("Close")
             item["changePercent"] = i.get("ChangePercent")
             # 单位亿，净买入，买入，卖出，成交额（买+卖）
-            item["net_in"] = round(i.get("HGTJME") / 10**8, 2)
-            item["in"] = round(i.get("HGTMRJE") / 10**8, 2)
-            item["out"] = round(i.get("HGTMCJE") / 10**8, 2)
-            item["total"] = round(i.get("HGTCJJE") / 10**8, 2)
+            item["net_in"] = round(i.get("HGTJME") / 10 ** 8, 2)
+            item["in"] = round(i.get("HGTMRJE") / 10 ** 8, 2)
+            item["out"] = round(i.get("HGTMCJE") / 10 ** 8, 2)
+            item["total"] = round(i.get("HGTCJJE") / 10 ** 8, 2)
             print(item), save_item_in_csv(item, "beixiang_20stock_{}.csv".format(str_now_day), self.title_num_1)
             self.title_num_1 = 1
 
@@ -72,9 +72,9 @@ class Beixiang10Spider(scrapy.Spider):
             item["close"] = i.get("Close")
             item["changePercent"] = i.get("ChangePercent")
             # 单位亿，净买入，买入，卖出，成交额（买+卖）
-            item["net_in"] = round(i.get("SGTJME") / 10**8, 2)
-            item["in"] = round(i.get("SGTMRJE") / 10**8, 2)
-            item["out"] = round(i.get("SGTMCJE") / 10**8, 2)
-            item["total"] = round(i.get("SGTCJJE") / 10**8, 2)
+            item["net_in"] = round(i.get("SGTJME") / 10 ** 8, 2)
+            item["in"] = round(i.get("SGTMRJE") / 10 ** 8, 2)
+            item["out"] = round(i.get("SGTMCJE") / 10 ** 8, 2)
+            item["total"] = round(i.get("SGTCJJE") / 10 ** 8, 2)
             print(item), save_item_in_csv(item, "beixiang_20stock_{}.csv".format(str_now_day), self.title_num_1)
             self.title_num_1 = 1

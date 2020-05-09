@@ -5,6 +5,7 @@ import json
 from lxml import etree
 from tt_fund.settings import str_now_day
 from tt_fund.settings import save_item_in_csv
+from copyheaders import headers_raw_to_dict
 
 """
 各爬虫说明详见github项目 https://github.com/CBJerry993/tt_fund
@@ -18,9 +19,26 @@ class FundEarningSpider(scrapy.Spider):
     start_urls = ["http://fund.eastmoney.com/data/rankhandler.aspx?op=ph&dt=kf&ft={}&rs=&gs=0&sc=zzf&st=desc&qdii=&" \
                   "tabSubtype=,,,,,&pi=1&pn=10000&dx=1&v=0.42187391938911856".format(i) for i in ["gp", "hh"]]
     # 表头仅写入一次
-    title_num_1, title_num_2_1, title_num_2_2, title_num_2_3 = [0] * 4
+    title_num_1, title_num_2_1, title_num_2_2, title_num_2_3 = 0, 0, 0, 0
     # 是否需要爬取以下内容
-    need_fund_earning_perday, need_fund_basic_info, need_fund_position = [1] * 3
+    need_fund_earning_perday, need_fund_basic_info, need_fund_position = 1, 1, 1
+
+    h = b'''
+    Accept: */*
+    Accept-Encoding: gzip, deflate
+    Accept-Language: zh-CN,zh;q=0.9
+    Connection: keep-alive
+    Host: fund.eastmoney.com
+    Referer: http://fund.eastmoney.com/data/fundranking.html
+    User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36
+    '''
+
+    def start_requests(self):
+        for url in self.start_urls:
+            yield scrapy.Request(
+                url,
+                headers=headers_raw_to_dict(self.h),
+            )
 
     # 1.基金当日收益排名情况（基金排名页）
     def parse(self, response):

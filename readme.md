@@ -290,8 +290,6 @@
 
   ![](https://upload-images.jianshu.io/upload_images/19723859-a869d6d5656e5cf4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-  
-
 - 文件名：market_index.py
 
 - 字段含义
