@@ -21,8 +21,8 @@ class FundEarningSpider(scrapy.Spider):
     # 表头仅写入一次
     title_num_1, title_num_2_1, title_num_2_2, title_num_2_3 = 0, 0, 0, 0
     # 是否需要爬取以下内容
-    need_fund_earning_perday, need_fund_basic_info, need_fund_position = 1, 1, 1
-
+    need_fund_earning_perday, need_fund_basic_info, need_fund_position = 0, 0, 1
+    # headers
     h = b'''
     Accept: */*
     Accept-Encoding: gzip, deflate
