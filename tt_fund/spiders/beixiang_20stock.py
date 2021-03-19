@@ -11,7 +11,7 @@ from tt_fund.settings import save_item_in_csv
 """
 
 
-# 获取时间的列表。默认从20180101到今天，可修改
+# 获取时间的列表。默认从20180101到今天，可修改。
 def get_time(start_time="2019-01-01", end_time=str(datetime.datetime.now().date())):
     # 时间序列
     import pandas as pd

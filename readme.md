@@ -2,7 +2,7 @@
 
 ## 零、版本信息
 
-版本：v1.0.20200509
+版本：v1.0.20200424
 
 启动方式：scrapy crawl spider.name
 
@@ -289,6 +289,8 @@
 - 原网址：[上证指数](http://quote.eastmoney.com/zs000001.html)、[深圳成指](http://quote.eastmoney.com/zs399001.html)、[创业板指](http://quote.eastmoney.com/zs399006.html)
 
   ![](https://upload-images.jianshu.io/upload_images/19723859-a869d6d5656e5cf4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+  
 
 - 文件名：market_index.py
 
