@@ -21,8 +21,13 @@ class FundEarningSpider(scrapy.Spider):
     # 表头仅写入一次
     title_num_1, title_num_2_1, title_num_2_2, title_num_2_3 = 0, 0, 0, 0
     # 是否需要爬取以下内容
-    need_fund_earning_perday, need_fund_basic_info, need_fund_position = 0, 0, 1
-    # headers
+    """
+    2.1基金成立以来每日净值  need_fund_earning_perday  此项数据较大
+    2.2基金基本信息  need_fund_basic_info
+    2.3基金10大持仓股(指定按年)  need_fund_position
+    """
+    need_fund_earning_perday, need_fund_basic_info, need_fund_position = 0, 1, 1
+
     h = b'''
     Accept: */*
     Accept-Encoding: gzip, deflate
