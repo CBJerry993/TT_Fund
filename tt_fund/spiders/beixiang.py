@@ -8,6 +8,7 @@ from tt_fund.settings import save_item_in_csv
 
 """
 各爬虫说明详见github项目 https://github.com/CBJerry993/tt_fund
+此爬虫仅获取 北向资金每日流向
 """
 
 
@@ -26,22 +27,23 @@ class BeixiangSpider(scrapy.Spider):
         response = re.findall(r'=(.*?)$', response.text)[0]
         response = json.loads(response)
         total_page_list.append(response.get("pages"))
-    total_page_sh, total_page_sz = total_page_list[0], total_page_list[1]
 
     start_urls = []
-    for i in range(1, total_page_sh + 1):
+    # 遍历上海
+    for i in range(1, total_page_list[0] + 1):
         url = 'http://dcfm.eastmoney.com/EM_MutiSvcExpandInterface/api/js/get?type=HSGTHIS&' \
               'token=70f12f2f4f091e459a279469fe49eca5&filter=(MarketType=1)&js=var SbHCvwIt=' \
               '{"data":(x),"pages":(tp)}&ps=20&p=%s&sr=-1&st=DetailDate&rt=52541396' % i
         start_urls.append(url)
 
-    for j in range(1, total_page_sz + 1):
+    # 遍历深圳
+    for j in range(1, total_page_list[1] + 1):
         url = 'http://dcfm.eastmoney.com/EM_MutiSvcExpandInterface/api/js/get?type=HSGTHIS&' \
               'token=70f12f2f4f091e459a279469fe49eca5&filter=(MarketType=3)&js=var SbHCvwIt=' \
               '{"data":(x),"pages":(tp)}&ps=20&p=%s&sr=-1&st=DetailDate&rt=52541396' % j
         start_urls.append(url)
 
-    # 1.北向资金每日流向
+    # 北向资金每日流向
     def parse(self, response):
         response = response.text
         response = re.findall(r'=(.*?)$', response)[0]
@@ -62,5 +64,6 @@ class BeixiangSpider(scrapy.Spider):
             item["stock_up"] = round(i.get("LCGZDF"), 2)
             item["sz_index"] = i.get("SSEChange")
             item["sz_index_percent"] = round(i.get("SSEChangePrecent") * 100, 2)
-            print(item), save_item_in_csv(item, "beixiang_{}.csv".format(str_now_day), self.title_num)
+            print(item)
+            save_item_in_csv(item, "beixiang_{}.csv".format(str_now_day), self.title_num)
             self.title_num = 1
