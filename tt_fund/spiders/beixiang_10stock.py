@@ -27,7 +27,6 @@ def get_item(i, item):
     item["marketType"] = str(int(i.get("MarketType")))
     item["date_time"] = i.get("DetailDate")
     item["date_time"] = item["date_time"].replace('T00:00:00', '')
-    item["rank"] = str(int(i.get("Rank")))
     item["code"] = "\t" + i.get("Code")
     item["name"] = i.get("Name")
     item["close"] = i.get("Close")
@@ -66,6 +65,7 @@ class Beixiang10stockSpider(scrapy.Spider):
             for i in response:
                 item = dict()
                 item = get_item(i, item)
+                item["rank"] = str(int(i.get("Rank")))
                 # 单位亿，净买入，买入，卖出，成交额（买+卖）
                 item["net_in"] = round(i.get("HGTJME") / 10 ** 8, 2)
                 item["in"] = round(i.get("HGTMRJE") / 10 ** 8, 2)
@@ -81,6 +81,7 @@ class Beixiang10stockSpider(scrapy.Spider):
             for i in response:
                 item = dict()
                 item = get_item(i, item)
+                item["rank"] = str(int(i.get("Rank")))
                 # 单位亿，净买入，买入，卖出，成交额（买+卖）
                 item["net_in"] = round(i.get("SGTJME") / 10 ** 8, 2)
                 item["in"] = round(i.get("SGTMRJE") / 10 ** 8, 2)
@@ -96,6 +97,7 @@ class Beixiang10stockSpider(scrapy.Spider):
             for i in response:
                 item = dict()
                 item = get_item(i, item)
+                item["rank"] = str(int(i.get("Rank")))
                 # 单位亿，净买入，买入，卖出，成交额（买+卖）
                 item["net_in"] = round(i.get("GGTHJME") / 10 ** 8, 2)
                 item["in"] = round(i.get("GGTHMRJE") / 10 ** 8, 2)
