@@ -17,8 +17,18 @@ class FundCompanySpider(scrapy.Spider):
     # 表头仅存一次
     title_num_1, title_num_2_1, title_num_2_2, title_num_2_3, title_num_2_4, title_num_2_5 = [0] * 6
     # 是否需要爬取以下内容
-    need_company_info, need_company_fundscale, need_company_fundlist, need_company_10stock, need_industry_category = \
-        [1] * 5
+    """
+    2.1基金公司基本信息  need_company_info
+    2.2基金公司股票型和混合型规模、数量、经理数量排名  need_company_fundscale
+    2.3基金公司下的基金清单  need_company_fundlist
+    2.4公司的10大持仓股票  need_company_10stock
+    2.5公司下的行业配置 need_industry_category
+    """
+    need_company_info = 1
+    need_company_fundscale = 1
+    need_company_fundlist = 1
+    need_company_10stock = 1
+    need_industry_category = 1
 
     # 1.主页基金列表
     def parse(self, response):
