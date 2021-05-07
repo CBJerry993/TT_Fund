@@ -26,7 +26,6 @@ class IndexSpider(scrapy.Spider):
     def parse(self, response):
         response = re.findall(r'\((.*?)\);$', response.text)[0]
         response = json.loads(response)
-        print(response)
         for i in response.get("data").get("klines"):
             item = {"code": response.get("data").get("code"), "name": response.get("data").get("name"),
                     "datetime": i.split(",")[0], "price_start": i.split(",")[1], "price_end": i.split(",")[2],
