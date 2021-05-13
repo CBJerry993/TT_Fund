@@ -57,7 +57,7 @@ class ManagerSpider(scrapy.Spider):
             item["avatar"] = response.xpath("//img[@id='photo']/@src")[0]
             item["start_day"] = response.xpath("//div[@class='right jd ']/text()")[3].strip()
             item["scale"] = response.xpath("//div[@class='gmleft gmlefts ']//span[@class='redText']/text()")[0]
-            item["scale"] = int(item["scale"])
+            item["scale"] = eval(item["scale"])
             item["best_reward"] = response.xpath("//div[@class='gmleft']//span[@class='numtext']/span/text()")[0]
             item["description"] = response.xpath("//div[@class='jlinfo clearfix']/div[@class='right ms']/p//text()")[
                 -1].strip()
