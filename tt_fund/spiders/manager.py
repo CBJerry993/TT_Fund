@@ -61,7 +61,7 @@ class ManagerSpider(scrapy.Spider):
             item["best_reward"] = response.xpath("//div[@class='gmleft']//span[@class='redText']/text()")[0]
             item["description"] = response.xpath("//div[@class='jlinfo clearfix']/div[@class='right ms']/p//text()")[
                 -1].strip()
-            item["fund_code"] = "\t" + fund.xpath("./td[1]/a/text()")[0]
+            item["fund_id"] = "\t" + fund.xpath("./td[1]/a/text()")[0]
             item["fund_name"] = fund.xpath("./td[2]/a/text()")[0]
             save_item_in_csv(item, "manager_{}.csv".format(str_now_day), self.title_num)
             self.title_num = 1

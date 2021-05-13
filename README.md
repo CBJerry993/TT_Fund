@@ -300,7 +300,38 @@
 
 
 
-## 五、大盘（上证指数、深圳成指、创业板指）每日涨跌情况
+## 五、基金经理信息
+
+- 原网址：[列表页](http://fund.eastmoney.com/manager)、[详情页](http://fund.eastmoney.com/manager/30634044.html)
+
+  ![](https://upload-images.jianshu.io/upload_images/19723859-a869d6d5656e5cf4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+  
+
+- 文件名：manager.py
+
+- 字段含义
+
+  | 字段名       | 含义                                 |
+  | ------------ | ------------------------------------ |
+  | manager_id   | 基金经理id                           |
+  | manager_name | 基金经理名字                         |
+  | company_id   | 所属公司id                           |
+  | company_name | 所属公司名字                         |
+  | avatar       | 基金经理头像                         |
+  | start_day    | 起任时间（可根据此字段计算工作年限） |
+  | scale        | 管理规模（单位：亿元）               |
+  | best_reward  | 任职期间最佳回报率                   |
+  | description  | 基金经理简介                         |
+  | fund_code    | 管理的基金名字                       |
+  | fund_name    | 管理的基金名字                       |
+  
+  
+
+
+
+
+## 六、大盘（上证指数、深圳成指、创业板指）每日涨跌情况
 
 - 原网址：[上证指数](http://quote.eastmoney.com/zs000001.html)、[深圳成指](http://quote.eastmoney.com/zs399001.html)、[创业板指](http://quote.eastmoney.com/zs399006.html)
 
