@@ -304,10 +304,6 @@
 
 - 原网址：[列表页](http://fund.eastmoney.com/manager)、[详情页](http://fund.eastmoney.com/manager/30634044.html)
 
-  ![](https://upload-images.jianshu.io/upload_images/19723859-a869d6d5656e5cf4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
-  
-
 - 文件名：manager.py
 
 - 字段含义
@@ -324,7 +320,7 @@
   | best_reward  | 任职期间最佳回报率                   |
   | description  | 基金经理简介                         |
   | fund_code    | 管理的基金名字                       |
-  | fund_name    | 管理的基金名字                       |
+  | fund_id      | 管理的基金id                         |
   
   
 
