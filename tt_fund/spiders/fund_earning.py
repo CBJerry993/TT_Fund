@@ -85,7 +85,7 @@ class FundEarningSpider(scrapy.Spider):
                 )
             # 2.3基金10大持仓股(指定按年)
             if self.need_fund_position:
-                for year in ["2020", "2021"]:
+                for year in ["2021"]:
                     yield scrapy.Request(
                         "http://fundf10.eastmoney.com/FundArchivesDatas.aspx?type=jjcc&code={}&topline=10&year={}"
                         "&month=".format(item["code"].strip(), year),
